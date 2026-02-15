@@ -1,0 +1,232 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');
+
+/* ─── Tailwind v4 base override — prevents reset from wiping theme ─── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html[data-theme="dark"] {
+    background-color: #080C14;
+    color: #F0F4FF;
+  }
+
+  html[data-theme="light"] {
+    background-color: #F0F4FF;
+    color: #0F1629;
+  }
+
+  body {
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg-base);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 99px;
+  }
+
+  /* Input / select resets */
+  input, select, textarea, button {
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  a {
+    text-decoration: none;
+  }
+}
+
+/* ─── Dark Theme Variables ─────────────────────────────────────────── */
+:root[data-theme="dark"] {
+  --bg-base:          #080C14;
+  --bg-surface:       #0D1320;
+  --bg-elevated:      #111827;
+  --bg-card:          #141E2E;
+  --border:           rgba(255, 255, 255, 0.07);
+  --border-strong:    rgba(255, 255, 255, 0.12);
+  --text-primary:     #F0F4FF;
+  --text-secondary:   #8896B3;
+  --text-muted:       #4A5568;
+  --accent:           #4F7EFF;
+  --accent-glow:      rgba(79, 126, 255, 0.25);
+  --accent-hover:     #6690FF;
+  --success:          #22C55E;
+  --success-glow:     rgba(34, 197, 94, 0.2);
+  --danger:           #F43F5E;
+  --danger-glow:      rgba(244, 63, 94, 0.2);
+  --warning:          #F59E0B;
+  --warning-glow:     rgba(245, 158, 11, 0.15);
+  --tag-viewer:       rgba(74, 85, 104, 0.4);
+  --tag-editor:       rgba(59, 130, 246, 0.15);
+  --tag-admin:        rgba(244, 63, 94, 0.15);
+  --shadow-card:      0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-elevated:  0 12px 48px rgba(0, 0, 0, 0.6);
+}
+
+/* ─── Light Theme Variables ────────────────────────────────────────── */
+:root[data-theme="light"] {
+  --bg-base:          #F0F4FF;
+  --bg-surface:       #FFFFFF;
+  --bg-elevated:      #FAFBFF;
+  --bg-card:          #FFFFFF;
+  --border:           rgba(0, 0, 0, 0.07);
+  --border-strong:    rgba(0, 0, 0, 0.12);
+  --text-primary:     #0F1629;
+  --text-secondary:   #4A5578;
+  --text-muted:       #9BA8C0;
+  --accent:           #3B6BFF;
+  --accent-glow:      rgba(59, 107, 255, 0.15);
+  --accent-hover:     #2557F5;
+  --success:          #16A34A;
+  --success-glow:     rgba(22, 163, 74, 0.1);
+  --danger:           #E11D48;
+  --danger-glow:      rgba(225, 29, 72, 0.1);
+  --warning:          #D97706;
+  --warning-glow:     rgba(217, 119, 6, 0.1);
+  --tag-viewer:       rgba(100, 116, 139, 0.1);
+  --tag-editor:       rgba(59, 107, 255, 0.1);
+  --tag-admin:        rgba(225, 29, 72, 0.1);
+  --shadow-card:      0 2px 16px rgba(15, 22, 41, 0.08);
+  --shadow-elevated:  0 8px 32px rgba(15, 22, 41, 0.12);
+}
+
+/* ─── Fallback (default to dark if no data-theme set yet) ──────────── */
+:root {
+  --bg-base:          #080C14;
+  --bg-surface:       #0D1320;
+  --bg-elevated:      #111827;
+  --bg-card:          #141E2E;
+  --border:           rgba(255, 255, 255, 0.07);
+  --border-strong:    rgba(255, 255, 255, 0.12);
+  --text-primary:     #F0F4FF;
+  --text-secondary:   #8896B3;
+  --text-muted:       #4A5568;
+  --accent:           #4F7EFF;
+  --accent-glow:      rgba(79, 126, 255, 0.25);
+  --accent-hover:     #6690FF;
+  --success:          #22C55E;
+  --success-glow:     rgba(34, 197, 94, 0.2);
+  --danger:           #F43F5E;
+  --danger-glow:      rgba(244, 63, 94, 0.2);
+  --warning:          #F59E0B;
+  --warning-glow:     rgba(245, 158, 11, 0.15);
+  --tag-viewer:       rgba(74, 85, 104, 0.4);
+  --tag-editor:       rgba(59, 130, 246, 0.15);
+  --tag-admin:        rgba(244, 63, 94, 0.15);
+  --shadow-card:      0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-elevated:  0 12px 48px rgba(0, 0, 0, 0.6);
+}
+
+/* ─── Typography Utilities ─────────────────────────────────────────── */
+.font-display {
+  font-family: 'Syne', sans-serif;
+}
+
+/* ─── Animations ───────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseRing {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position:  200% 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ─── Animation Classes ────────────────────────────────────────────── */
+.animate-fade-up {
+  animation: fadeUp 0.5s ease both;
+}
+.animate-fade-up-1 {
+  animation: fadeUp 0.5s 0.1s ease both;
+}
+.animate-fade-up-2 {
+  animation: fadeUp 0.5s 0.2s ease both;
+}
+.animate-fade-up-3 {
+  animation: fadeUp 0.5s 0.3s ease both;
+}
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+.animate-pulse {
+  animation: pulseRing 2s ease-in-out infinite;
+}
+.animate-slide-in {
+  animation: slideInLeft 0.3s ease both;
+}
+
+/* ─── Progress Bar Shimmer ─────────────────────────────────────────── */
+.progress-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--accent) 25%,
+    var(--accent-hover) 50%,
+    var(--accent) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* ─── Glass Effect ─────────────────────────────────────────────────── */
+.glass {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="light"] .glass {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* ─── Mobile sidebar helpers ───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .sidebar-desktop {
+    display: none !important;
+  }
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+  .mobile-close {
+    display: flex !important;
+  }
+}
