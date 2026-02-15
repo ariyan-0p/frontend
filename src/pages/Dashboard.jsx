@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 
 // Connect to the backend Socket.io server
+// FIX: Ensure this points to Render, not localhost
 const socket = io("https://backend-7eck.onrender.com");
 
 function Dashboard() {
@@ -19,8 +20,10 @@ function Dashboard() {
   const user = JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
 
+  // Define the Production Backend URL for static assets and streaming
+  const BACKEND_URL = "https://backend-7eck.onrender.com"; //
+
   useEffect(() => {
-    // Initial fetch of videos belonging to the user's organization
     fetchVideos();
 
     // Listen for real-time progress updates from the backend
@@ -34,7 +37,6 @@ function Dashboard() {
       );
     });
 
-    // Cleanup socket listener on component unmount
     return () => socket.off('videoProgress');
   }, []);
 
@@ -61,9 +63,8 @@ function Dashboard() {
       const res = await api.post('/videos/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      // Add the new video to the top of the list
       setVideos([res.data, ...videos]);
-      e.target.reset(); // Reset the file input
+      e.target.reset();
     } catch (err) {
       alert('Upload failed: ' + (err.response?.data?.msg || 'Check console'));
     } finally {
@@ -78,7 +79,7 @@ function Dashboard() {
 
   return (
     <div className="flex min-h-screen bg-slate-950 text-slate-200">
-      {/* --- Sidebar - Desktop --- */}
+      {/* Sidebar - Desktop */}
       <aside className="w-64 bg-slate-900 border-r border-slate-800 hidden md:flex flex-col fixed h-full shadow-2xl z-50">
         <div className="p-6 flex items-center gap-3 border-b border-slate-800">
           <div className="bg-blue-600 p-2 rounded-lg shadow-lg shadow-blue-900/20">
@@ -93,7 +94,6 @@ function Dashboard() {
             <span className="font-medium">Dashboard</span>
           </button>
           
-          {/* Admin specific menu item */}
           {user?.role === 'admin' && (
             <button 
               onClick={() => navigate('/admin/users')}
@@ -105,12 +105,11 @@ function Dashboard() {
           )}
         </nav>
 
-        {/* User Identity Section */}
         <div className="p-4 border-t border-slate-800">
           <div className="bg-slate-800/50 p-4 rounded-2xl mb-4 border border-slate-700/50">
             <p className="text-sm font-semibold text-white truncate">{user?.username || 'User'}</p>
             <p className="text-[10px] text-blue-500 uppercase font-bold tracking-widest mt-0.5">{user?.role || 'Viewer'}</p>
-            <p className="text-[10px] text-slate-500 truncate mt-1">Tenant ID: {user?.organizationId || 'org_default'}</p>
+            <p className="text-[10px] text-slate-500 truncate mt-1">Org ID: {user?.organizationId || 'org_default'}</p>
           </div>
           <button 
             onClick={handleLogout} 
@@ -122,7 +121,6 @@ function Dashboard() {
         </div>
       </aside>
 
-      {/* --- Main Content Area --- */}
       <main className="flex-1 md:ml-64 p-6 md:p-10">
         <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-12">
           <div>
@@ -130,19 +128,16 @@ function Dashboard() {
             <p className="text-slate-400 mt-1">Secure multi-tenant streaming for your organization.</p>
           </div>
 
-          {/* RBAC: Only Admin/Editor see the Upload interface */}
           {(user?.role === 'admin' || user?.role === 'editor') && (
             <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl flex items-center gap-4">
               <form onSubmit={handleUpload} className="flex items-center gap-4">
-                <div className="relative group">
-                  <input 
-                    type="file" 
-                    name="video" 
-                    accept="video/*" 
-                    required 
-                    className="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-600/10 file:text-blue-400 hover:file:bg-blue-600/20 cursor-pointer transition-all"
-                  />
-                </div>
+                <input 
+                  type="file" 
+                  name="video" 
+                  accept="video/*" 
+                  required 
+                  className="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-600/10 file:text-blue-400 hover:file:bg-blue-600/20 cursor-pointer transition-all"
+                />
                 <button 
                   type="submit" 
                   disabled={uploading}
@@ -156,20 +151,19 @@ function Dashboard() {
           )}
         </header>
 
-        {/* --- Video Grid --- */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {videos.map((video) => (
             <div 
               key={video._id} 
               className="group bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden hover:border-slate-700 transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1"
             >
-              {/* Media Player / Processing Overlay */}
               <div className="relative aspect-video bg-slate-800 overflow-hidden">
                 {video.sensitivityStatus === 'safe' ? (
                   <video 
                     controls 
                     className="w-full h-full object-cover" 
-                    src={`http://localhost:5000/api/videos/stream/${video._id}?token=${token}`} 
+                    // FIX: Use production BACKEND_URL for the streaming source
+                    src={`${BACKEND_URL}/api/videos/stream/${video._id}?token=${token}`} 
                   />
                 ) : (
                   <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-slate-900/80 backdrop-blur-sm">
@@ -181,8 +175,6 @@ function Dashboard() {
                     ) : (
                       <>
                         <Clock size={48} className="text-blue-500 mb-2 animate-pulse" />
-                        
-                        {/* Real-Time Progress Bar */}
                         {video.sensitivityStatus === 'processing' && (
                           <div className="w-full mt-4">
                             <div className="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
@@ -202,7 +194,6 @@ function Dashboard() {
                 )}
               </div>
 
-              {/* Video Metadata Card */}
               <div className="p-5">
                 <h3 className="text-white font-medium truncate mb-3 group-hover:text-blue-400 transition-colors">
                   {video.title}
@@ -227,7 +218,6 @@ function Dashboard() {
           ))}
         </div>
         
-        {/* Empty State */}
         {videos.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-slate-600">
             <VideoIcon size={64} className="mb-4 opacity-20" />

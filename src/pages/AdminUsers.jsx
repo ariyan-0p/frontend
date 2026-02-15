@@ -7,16 +7,25 @@ const AdminUsers = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const token = localStorage.getItem('token');
 
+  // Define the Production Backend URL
+  const API_BASE_URL = "https://backend-7eck.onrender.com"; //
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/admin/users', { 
+        // Updated URL to use the deployed Render server instead of localhost
+        const res = await axios.get(`${API_BASE_URL}/api/admin/users`, { 
           headers: { 'x-auth-token': token } 
         });
         setUsers(res.data);
-      } catch (err) { console.error("Admin access required"); }
+      } catch (err) { 
+        console.error("Admin access required or server error"); 
+      }
     };
-    fetchUsers();
+
+    if (token) {
+      fetchUsers();
+    }
   }, [token]);
 
   return (
@@ -33,21 +42,29 @@ const AdminUsers = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-700">
-            {users.map(u => (
-              <tr key={u._id} className="hover:bg-gray-700/30 transition">
-                <td className="p-4 font-medium">{u.username}</td>
-                <td className="p-4 text-gray-400">{u.email}</td>
-                <td className="p-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                    u.role === 'admin' ? 'bg-red-900 text-red-300' : 
-                    u.role === 'editor' ? 'bg-blue-900 text-blue-300' : 'bg-gray-600 text-gray-200'
-                  }`}>
-                    {u.role}
-                  </span>
+            {users.length > 0 ? (
+              users.map(u => (
+                <tr key={u._id} className="hover:bg-gray-700/30 transition">
+                  <td className="p-4 font-medium">{u.username}</td>
+                  <td className="p-4 text-gray-400">{u.email}</td>
+                  <td className="p-4">
+                    <span className={`px-2 py-1 rounded-full text-xs font-bold ${
+                      u.role === 'admin' ? 'bg-red-900 text-red-300' : 
+                      u.role === 'editor' ? 'bg-blue-900 text-blue-300' : 'bg-gray-600 text-gray-200'
+                    }`}>
+                      {u.role}
+                    </span>
+                  </td>
+                  <td className="p-4 text-gray-500 font-mono">{u.organizationId}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="p-8 text-center text-gray-500">
+                  No users found or unauthorized access.
                 </td>
-                <td className="p-4 text-gray-500 font-mono">{u.organizationId}</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
