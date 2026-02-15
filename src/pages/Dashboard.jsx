@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 // Connect to the backend Socket.io server
-const socket = io('http://localhost:5000');
+const socket = io("https://backend-7eck.onrender.com");
 
 function Dashboard() {
   const [videos, setVideos] = useState([]);
