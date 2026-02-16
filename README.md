@@ -5,8 +5,7 @@ This is the **Frontend Client** for the StreamSafe application, built with React
 ## 🚀 Live Application
 **Visit the App:** https://frontend-rho-beryl-70.vercel.app/
 
-## 🔗 Related Repositories
-* **Backend API:** [Insert Link to your Backend GitHub Repo Here]
+
 
 ## 🛠️ Technology Stack
 * **Framework:** React 19 + Vite
